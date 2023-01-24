@@ -14,15 +14,15 @@ def jogar():
     3 --- Difícil\n''')
     
 
-  
   def escolha_do_nivel():
     niveis = ['fácil','médio','difícil']
     
     while True:
-      nivel = int(input('Sua escolha [1 / 2 / 3]: '))
-      if(nivel == 1 or nivel == 2 or nivel == 3):
+      nivel = input('Sua escolha [1 / 2 / 3]: ').strip()
+      if(nivel == '1' or nivel == '2' or nivel == '3'):
+        nivel = int(nivel)
         break
-      print('Escolha corretamente.',end=' ')
+      print('Escolha um número válido.',end=' ')
         
     if (nivel == 1):
       attempts = 10
@@ -37,26 +37,27 @@ def jogar():
     
   
   def print_pontos():
+    pontos = "..."
+    for p in pontos:
+      sleep(0.3)
+      print(f'{p}', end='', flush = True)
     sleep(0.3)
-    print('.',end='',flush=True)
-    sleep(0.3)
-    print('.',end='',flush=True)
-    sleep(0.3)
-    print('.',flush=True)
-    sleep(0.3)
-    print('')
+    print('\n')
     
 
   def processa_tentativa(vez,attempted):    
     while True:
       tentativa = input(f'{vez}ª tentativa: ').strip()
-      if (tentativa == ''):
-        print('Não desperdice essa chance tão valiosa com um espaço em branco.')
-      else:
+      if(tentativa.isnumeric()):
         tentativa = int(tentativa)
+        
         if(tentativa not in attempted):
           break
-        print(f'Você ja tentou o {tentativa}, pense em outro número.')
+          
+        print(f'\nVocê ja tentou o {tentativa}, pense em outro número.')
+      else:
+        print('Escolha um número válido.', end = ' ')
+        
     return tentativa
 
     
@@ -83,7 +84,6 @@ def jogar():
   tentativas = escolha_do_nivel()
   
   for n in range(1, tentativas+1):
-    
     num_tentado = processa_tentativa(n,numeros_ja_tentados)
     numeros_ja_tentados.append(num_tentado)
     
