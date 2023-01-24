@@ -2,7 +2,11 @@ from random import randint
 from time import sleep
 
 
-def jogar():
+def jogar():  
+  def linha():
+    print('\n'+'=+'*20)
+
+    
   def configura_palavra():
     frutas = []
     with open("frutas.txt") as arquivo:
@@ -14,11 +18,9 @@ def jogar():
     return word
 
   
-
-  
   def mostra_palavra(word, right_letters):
     sleep(0.4)
-    print('Palavra:', end=' ', flush=True)
+    print('\nPalavra:', end=' ', flush=True)
     for c, p in enumerate(word):
       sleep(0.3)
       if (p in right_letters):
@@ -28,32 +30,43 @@ def jogar():
     print()
 
   
-  def mostra_letras_erradas(wrong_letters):
-    print('\nLetras erradas:', end=' ', flush=True)
-    for l in wrong_letters:
-      sleep(0.3)
-      print(f'{l}', end=' ', flush=True)
-    print('\n')
+  def mostra_tentativas_erradas(wrong_attempts):
+    if(len(wrong_attempts) > 0):
+      print('\nTentativas erradas:', end=' ', flush=True)
+      for l in wrong_attempts:
+        sleep(0.3)
+        print(f'{l}', end=' ', flush=True)  
   
   
-  
-  def realiza_tentativa(right_letters, wrong_letters, word):
+  def realiza_tentativa(right_letters, wrong_attempts):
     while True:
-      letter = input('Digite uma letra: ').strip().upper()
-      if(letter == ''):
-        print('Não desperdice essa chance tão valiosa com um espaço em branco.')
-      else:
-        if(letter not in right_letters and letter not in wrong_letters):
-          break      
-        print('Você ja tentou essa letra, pense em outra.')
+      tentativa = input('Digite uma letra: ').strip().upper()
+      if(tentativa == '' or tentativa.isalnum()):
+        if(tentativa.isalpha() == False):
+          print('Por favor realize a tentativa corretamente.',end=' ')
+        elif(tentativa not in right_letters and tentativa not in wrong_attempts):
+          break
+        else:
+            print('Você já fez essa tentativa, faça uma diferente.\n')
       sleep(0.3)
+    return tentativa
 
-    print('\n'+'=+'*20,'\n')
-    
-    amount_and_letter = [word.count(letter), letter]
-    return amount_and_letter
+  
+  def tenta_palavra(attempt, word):
+    if(attempt != word):
+      return True
 
-
+  
+  def tenta_letra(attempt, word):
+    conta_letra = word.count(attempt)
+    if(conta_letra == 0):
+      return True
+          
+  
+  def errou_tentativa(attempt, wrong_attempts):
+    wrong_attempts.append(attempt)
+    return wrong_attempts
+  
   
   def desenha_forca(num):
     sleep(0.6)
@@ -61,44 +74,47 @@ def jogar():
     print("  _______     ")
     print(" |/      |    ")
 
+    if(num == 6):
+      print(" |            ")
+      print(" |            ")
+      print(" |            ")
+      print(" |            ")
+      
     if(num == 5):
-        print(" |      (_)   ")
-        print(" |            ")
-        print(" |            ")
-        print(" |            ")
+      print(" |      (_)   ")
+      print(" |            ")
+      print(" |            ")
+      print(" |            ")
 
     if(num == 4):
-        print(" |      (_)   ")
-        print(" |       |    ")      
-        print(" |       |    ")
-        print(" |            ")
-        print(" |            ")
+      print(" |      (_)   ")
+      print(" |       |    ")      
+      print(" |       |    ")
+      print(" |            ")
 
     if(num == 3):
-        print(" |      (_)   ")
-        print(" |      /|    ")
-        print(" |       |    ")
-        print(" |            ")
-        print(" |            ")
+      print(" |      (_)   ")
+      print(" |      /|    ")
+      print(" |       |    ")
+      print(" |            ")
 
     if(num == 2):
-        print(" |      (_)   ")
-        print(" |      /|\   ")
-        print(" |       |    ")
-        print(" |            ")
-        print(" |            ")
+      print(" |      (_)   ")
+      print(" |      /|\   ")
+      print(" |       |    ")
+      print(" |            ")
 
     if(num == 1):
-        print(" |      (_)   ")
-        print(" |      /|\   ")
-        print(" |       |    ")
-        print(" |      /     ")
+      print(" |      (_)   ")
+      print(" |      /|\   ")
+      print(" |       |    ")
+      print(" |      /     ")
 
     if (num == 0):
-        print(" |      (_)   ")
-        print(" |      /|\   ")
-        print(" |       |    ")
-        print(" |      / \   ")
+      print(" |      (_)   ")
+      print(" |      /|\   ")
+      print(" |       |    ")
+      print(" |      / \   ")
 
     print(" |            ")
     print("_|___         ")
@@ -107,64 +123,64 @@ def jogar():
     if num > 0: print (f'Ainda pode errar {num}x.')
     print()
 
-
-
-
-
-
-    
- 
   
   def finaliza(word,right_letters):
     if acertou:
+      linha()
       mostra_palavra(word,right_letters)
       print('\nParabéns, você venceu!')
     else:
       print(f'A palavra era {word}.')
-    print('\n'+'=+'*20)
+    linha()
   
- 
   
   palavra = configura_palavra()
   qtde_letras_palavra = len(palavra)
   
   letras_certas = list()
-  qtde_letras_certas = len(letras_certas)
+  qtde_letras_certas = 0
+
+  tentativas_erradas = list()
   
-  letras_erradas= list()
-  
-  tentativas = 6
-  
+  vida = 6
   acertou = enforcou = False
+
+#
+#    jogo
+#
   
   while (not acertou and not enforcou):
     sleep(0.3)
-
     print('Dica: fruta')
     
     mostra_palavra(palavra, letras_certas)
-           
-    mostra_letras_erradas(letras_erradas)
-    
-    qntd_letra_aparece_palavra = realiza_tentativa(letras_certas, letras_erradas, palavra)
-    x_letra_aparece = qntd_letra_aparece_palavra[0]
-    letra = qntd_letra_aparece_palavra[1]
-    
-    if (x_letra_aparece == 0):
-      letras_erradas.append(letra)
-      tentativas -= 1
-      if(tentativas == 0):
-        enforcou = True
+    mostra_tentativas_erradas(tentativas_erradas)
+    print('\n')
+
+    tentativa = realiza_tentativa(letras_certas, tentativas_erradas)
+    tamanho = len(tentativa)
+
+    if(tamanho == 1):
+      errado = tenta_letra(tentativa, palavra)
     else:
-      letras_certas.append(letra)
-      qtde_letras_certas += palavra.count(letra)
-      
-      if (qtde_letras_certas == qtde_letras_palavra):
-        print('Dica: fruta')
+      errado = tenta_palavra(tentativa, palavra)
+      if(not errado):
+        letras_certas = [x for x in tentativa]
         acertou = True
-      
+
+    if(errado):
+      tentativas_erradas = errou_tentativa(tentativa,tentativas_erradas)
+      vida -= 1
+      enforcou = True if vida == 0 else False
+    else:
+      letras_certas.append(tentativa)
+      qtde_letras_certas += palavra.count(tentativa)
+      if(qtde_letras_palavra == qtde_letras_certas):
+        acertou = True
+
+    
     if(not acertou):
-      desenha_forca(tentativas)
+      desenha_forca(vida)
       
     sleep(0.3)
   
